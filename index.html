@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Blue Expanse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        :root {
+            --bg-color: #000000;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent-blue: #2979ff;
+            --glass-bg: rgba(18, 18, 18, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --header-width: 90%;
+            --max-content-width: 360px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* SPACE FOR TITLE UNDER HEADER */
+        .title-space {
+            position: fixed;
+            top: 90px;
+            /* تحت الهيدر مباشرة */
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: calc(100% - 40px);
+            max-width: 390px;
+            height: 40px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 95;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: -0.3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .page-title.show {
+            opacity: 1;
+        }
+
+        /* ACTION BUTTONS NEXT TO PAGE TITLE */
+        .title-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            background: rgba(22, 22, 22, 0.8);
+            backdrop-filter: blur(35px) saturate(200%);
+            -webkit-backdrop-filter: blur(35px) saturate(200%);
+            border: 1.5px solid rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .action-btn i {
+            color: var(--text-primary);
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .action-btn:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            position: fixed;
+            top: 15px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: calc(100% - 40px);
+            max-width: 390px;
+            height: 60px;
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(22, 22, 22, 0.75);
+            backdrop-filter: blur(35px) saturate(200%);
+            -webkit-backdrop-filter: blur(35px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: 600;
+            color: #888;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        body.scrolled-mode .header-center {
+            opacity: 1;
+        }
+
+        body.scrolled-mode .title-space {
+            transform: translateY(-80px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        body.scrolled-mode .tabs-container {
+            transform: translateY(-80px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: -0.3px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 18px;
+            width: 38px;
+            height: 38px;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .profile-bubble {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF4081, #FF6B9D);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(255, 64, 129, 0.3);
+        }
+
+        /* SEARCH BAR - UPDATED */
+        .search-container {
+            /* Removed standalone search container styles */
+            display: none;
+        }
+
+        .search-container.show {
+            display: block;
+        }
+
+        .search-bar {
+            width: 100%;
+            height: 38px;
+            background: rgba(100, 170, 255, 0.18);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1.5px solid rgba(100, 170, 255, 0.35);
+            border-radius: 19px;
+            padding: 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            box-shadow: 0 6px 25px rgba(41, 121, 255, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .search-bar i {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            padding-right: 30px;
+            /* مساحة لزر X */
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+        }
+
+        /* CLEAR SEARCH BUTTON */
+        .clear-search {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0;
+            pointer-events: none;
+            font-size: 12px;
+        }
+
+        .clear-search.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .clear-search:active {
+            transform: translateY(-50%) scale(0.92);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ADD MENU */
+        .add-menu {
+            position: fixed;
+            top: 135px;
+            left: auto;
+            right: max(35px, calc(50% - 180px));
+            margin: 0;
+            width: 180px;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(60px) saturate(180%);
+            -webkit-backdrop-filter: blur(60px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            padding: 6px;
+            z-index: 150;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8),
+                0 10px 25px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            opacity: 0;
+            transform: scale(0.85) translateY(-5px);
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: top right;
+        }
+
+        .add-menu.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: all;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 12px;
+            margin-bottom: 2px;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: var(--text-primary);
+            background: transparent;
+        }
+
+        .menu-item:not(:last-child) {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 0;
+            border-radius: 9px 9px 0 0;
+        }
+
+        .menu-item:last-child {
+            margin-bottom: 0;
+            border-radius: 0 0 9px 9px;
+        }
+
+        .menu-item:not(:last-child):not(:first-child) {
+            border-radius: 0;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .menu-item:active {
+            background: rgba(255, 255, 255, 0.18);
+            transform: scale(0.97);
+        }
+
+        .menu-item i {
+            width: 20px;
+            font-size: 15px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .menu-item span {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: -0.2px;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 149;
+            display: none;
+        }
+
+        .menu-overlay.show {
+            display: block;
+        }
+
+        /* TABS */
+        .tabs-container {
+            position: fixed;
+            top: 140px;
+            /* Moved up to where search was */
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: calc(100% - 50px);
+            max-width: 380px;
+            display: none;
+            z-index: 98;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .tabs-container.show {
+            display: flex;
+        }
+
+        .tabs-wrapper {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            padding: 12px 20px;
+            width: 100%;
+        }
+
+        .tab-item {
+            padding: 8px 4px;
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            letter-spacing: 0.3px;
+            border: none;
+            position: relative;
+        }
+
+        .tab-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2.5px;
+            background: #ffffff;
+            border-radius: 2px;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tab-item.active {
+            color: #ffffff;
+        }
+
+        .tab-item.active::after {
+            transform: scaleX(1);
+        }
+
+        .tab-item:hover {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .tab-item:active {
+            transform: translateY(1px);
+        }
+
+        .pages-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            padding-bottom: 100px;
+            /* مساحة للشريط السفلي */
+        }
+
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .page.with-search {
+            padding-top: 195px;
+            /* Adjusted for removed search bar */
+        }
+
+        .page:not(.with-search) {
+            padding-top: 145px;
+            /* مساحة للعنوان فقط */
+        }
+
+        .content-center {
+            width: 100%;
+            max-width: 390px;
+            min-height: calc(100vh - 240px);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px 20px 115px;
+        }
+
+        .content-center.cards-only {
+            justify-content: flex-start;
+            padding: 0 20px 115px;
+        }
+
+        .page-icon-large {
+            font-size: 80px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--accent-blue), #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.9;
+            filter: drop-shadow(0 0 20px rgba(41, 121, 255, 0.3));
+        }
+
+        h2 {
+            font-weight: 700;
+            font-size: 32px;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-desc {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.5;
+            max-width: 280px;
+        }
+
+        /* BOTTOM NAV - FIXED AND IMPROVED */
+        .bottom-nav {
+            position: fixed;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            width: calc(100% - 40px);
+            max-width: 390px;
+            height: 75px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(60px) saturate(200%);
+            -webkit-backdrop-filter: blur(60px) saturate(200%);
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 100;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+                0 10px 25px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            overflow: visible;
+        }
+
+        /* TRANSPARENT WATER DROP EFFECT - FIXED POSITION */
+        .nav-background {
+            position: absolute;
+            width: 90px;
+            height: 55px;
+            background: rgba(255, 255, 255, 0.02);
+            /* شفافة تماماً تقريباً */
+            border-radius: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: none;
+            z-index: 1;
+            left: 10px;
+            /* موضع ابتدائي */
+        }
+
+        /* NAV ITEMS - FIXED */
+        .nav-item {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            cursor: pointer;
+            gap: 4px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.2s ease;
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 2;
+            color: #ffffff;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 2;
+            color: #ffffff;
+        }
+
+        /* ACTIVE STATE - BLUE ICON AND LABEL */
+        .nav-item.active .nav-icon {
+            color: var(--accent-blue);
+            transform: scale(1.1);
+        }
+
+        .nav-item.active .nav-label {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        /* HOVER EFFECTS */
+        .nav-item:not(.active):hover .nav-icon {
+            color: rgba(41, 121, 255, 0.7);
+            transform: scale(1.05);
+        }
+
+        .nav-item:not(.active):hover .nav-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
+        }
+
+        .overlay-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000000;
+            z-index: 200;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+            padding-top: 0;
+        }
+
+        .overlay-page.active {
+            transform: translateY(0);
+        }
+
+        .overlay-header {
+            position: sticky;
+            top: 15px;
+            left: 0;
+            right: 0;
+            margin: 15px auto 0;
+            width: calc(100% - 40px);
+            max-width: 390px;
+            height: 60px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(22, 22, 22, 0.75);
+            backdrop-filter: blur(35px) saturate(200%);
+            -webkit-backdrop-filter: blur(35px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            z-index: 201;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            margin: 15px auto 0;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 16px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .overlay-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .settings-btn-elegant {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .settings-btn-elegant:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .profile-content {
+            width: 100%;
+            max-width: 390px;
+            margin: 0 auto;
+            padding: 15px 20px 115px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-pic-large {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF4081, #FF6B9D);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 20px;
+            box-shadow: 0 25px 70px rgba(255, 64, 129, 0.35);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-name {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .profile-info {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .settings-list {
+            width: 100%;
+            max-width: 390px;
+            margin: 0 auto;
+            padding: 15px 20px 115px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            margin-bottom: 10px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .setting-item:active {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(0.98);
+        }
+
+        .setting-item i {
+            width: 38px;
+            color: var(--text-secondary);
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .setting-item span {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .setting-item i.fa-chevron-right {
+            width: auto;
+            font-size: 13px;
+            opacity: 0.3;
+        }
+
+        .stats-grid {
+            width: 100%;
+            max-width: 390px;
+            margin: 0 auto;
+            padding: 15px 20px 115px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .notif-list {
+            width: 100%;
+            max-width: 390px;
+            margin: 0 auto;
+            padding: 15px 20px 115px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .notif-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 18px;
+        }
+
+        .notif-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), #00d4ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .notif-content {
+            flex: 1;
+        }
+
+        .notif-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .notif-time {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* TRANSFORM CARDS - GRID LAYOUT */
+        .transform-cards {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0;
+        }
+
+        .transform-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            height: 140px;
+            justify-content: center;
+        }
+
+        .transform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.15),
+                    transparent);
+        }
+
+        .transform-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top, rgba(255, 255, 255, 0.03), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .transform-card:active {
+            transform: scale(0.97);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .transform-card:active::after {
+            opacity: 1;
+        }
+
+        .transform-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 22px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            color: #ffffff;
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.35s ease;
+            position: relative;
+        }
+
+        .transform-card-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 60%);
+        }
+
+        .transform-card:active .transform-card-icon {
+            transform: scale(0.95);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .transform-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 0;
+            letter-spacing: -0.2px;
+            color: #ffffff;
+        }
+
+        .transform-card-desc {
+            display: none;
+        }
+
+        /* MARKET GRID */
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 0 20px 100px;
+            width: 100%;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .product-card:active {
+            transform: scale(0.96);
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #2a2a2a, #333);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 24px;
+        }
+
+        .product-info {
+            padding: 8px;
+        }
+
+        .product-price {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .product-desc-short {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-like {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        .product-save {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+        }
+
+        /* PRODUCT DETAILS */
+        .product-details-content {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-large-image {
+            width: 100%;
+            height: 35vh;
+            background: rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: var(--accent-blue);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: zoom-in;
+            position: relative;
+        }
+
+        .overlay-actions-top {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .overlay-action-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .overlay-action-circle:active {
+            transform: scale(0.9);
+        }
+
+        .product-details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px 0;
+        }
+
+        .product-details-likes {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .product-details-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .product-details-price {
+            font-size: 20px;
+            color: var(--accent-blue);
+            font-weight: 600;
+            padding: 5px 20px 15px;
+        }
+
+        .product-details-desc {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 0 20px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .seller-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 20px;
+            margin: 0 20px 25px;
+            border-radius: 15px;
+        }
+
+        .seller-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF4081, #FF6B9D);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 14px;
+        }
+
+        .seller-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .seller-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .seller-rating {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .product-actions {
+            padding: 0 20px 30px;
+            display: flex;
+            gap: 12px;
+        }
+
+        /* LIGHTBOX */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .lightbox-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 150px;
+            color: white;
+        }
+
+
+
+        .action-btn-large {
+            width: 100%;
+            height: 50px;
+            border-radius: 25px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+
+        .action-btn-large:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+            box-shadow: 0 4px 15px rgba(41, 121, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(41, 121, 255, 0.15);
+            color: var(--accent-blue);
+            border: 1px solid rgba(41, 121, 255, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- HEADER WITH APP NAME -->
+        <div class="header">
+            <div class="header-left">
+                <div class="profile-bubble" onclick="openProfile()">AJ</div>
+            </div>
+            <div class="header-center">Marketplace</div>
+            <div class="header-right">
+                <button class="icon-btn" onclick="openStats()"><i class="fas fa-chart-bar"></i></button>
+                <button class="icon-btn" onclick="openNotif()"><i class="fas fa-bell"></i></button>
+            </div>
+        </div>
+
+        <!-- PAGE TITLE SPACE WITH ACTION BUTTONS -->
+        <div class="title-space">
+            <div class="page-title" id="pageTitle"></div>
+            <div class="title-actions" id="titleActions">
+                <!-- Action buttons will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- SEARCH BAR - REMOVED -->
+        <!-- Search is now an overlay -->
+
+        <!-- ADD MENU (HIDDEN BY DEFAULT) -->
+        <div class="add-menu" id="addMenu">
+            <!-- Menu items will be dynamically added here -->
+        </div>
+
+        <!-- MENU OVERLAY -->
+        <div class="menu-overlay" id="menuOverlay" onclick="closeAddMenu()"></div>
+
+        <!-- TABS -->
+        <div class="tabs-container" id="tabsContainer">
+            <div class="tabs-wrapper">
+                <div class="tab-item active" onclick="switchTab(0)">All</div>
+                <div class="tab-item" onclick="switchTab(1)">Popular</div>
+                <div class="tab-item" onclick="switchTab(2)">Recent</div>
+            </div>
+        </div>
+
+        <!-- PAGES -->
+        <div class="pages-container">
+            <!-- PAGE 0: TRANSFORM -->
+            <div class="page active" id="page-0">
+                <div class="content-center"
+                    style="justify-content: flex-start; padding-top: 140px; padding-left: 20px; padding-right: 20px;">
+                    <div class="transform-cards">
+                        <div class="transform-card orders" onclick="openOrders()">
+                            <div class="transform-card-icon">
+                                <i class="fas fa-file-signature"></i>
+                            </div>
+                            <div class="transform-card-title">Orders</div>
+                        </div>
+
+                        <div class="transform-card purchases" onclick="openPurchases()">
+                            <div class="transform-card-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="transform-card-title">Purchases</div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Settings REMOVED -->
+                </div>
+            </div>
+
+            <!-- PAGE 1: MARKET -->
+            <div class="page with-search" id="page-1">
+                <div class="market-grid" id="marketGrid">
+                    <!-- Products will be generated here -->
+                </div>
+            </div>
+
+            <!-- PAGE 2: DISCOVER -->
+            <div class="page with-search" id="page-2">
+                <div class="content-center">
+                    <i class="fas fa-compass page-icon-large"></i>
+                    <h2>Discover</h2>
+                    <p class="page-desc">Explore trending topics and content</p>
+                </div>
+            </div>
+
+            <!-- PAGE 3: CHATS -->
+            <div class="page with-search" id="page-3">
+                <div class="content-center">
+                    <i class="fas fa-comment-dots page-icon-large"></i>
+                    <h2>Chats</h2>
+                    <p class="page-desc">Connect with your conversations</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAVIGATION -->
+        <nav class="bottom-nav">
+            <div class="nav-background" id="navBackground"></div>
+            <div class="nav-item active" onclick="switchPage(0)">
+                <i class="fas fa-cube nav-icon"></i>
+                <span class="nav-label">Transform</span>
+            </div>
+            <div class="nav-item" onclick="switchPage(1)">
+                <i class="fas fa-store nav-icon"></i>
+                <span class="nav-label">Market</span>
+            </div>
+            <div class="nav-item" onclick="switchPage(2)">
+                <i class="fas fa-compass nav-icon"></i>
+                <span class="nav-label">Discover</span>
+            </div>
+            <div class="nav-item" onclick="switchPage(3)">
+                <i class="fas fa-comment nav-icon"></i>
+                <span class="nav-label">Chats</span>
+            </div>
+        </nav>
+
+        <!-- PROFILE OVERLAY -->
+        <div class="overlay-page" id="profileOverlay">
+            <div class="overlay-header">
+                <button class="back-btn" onclick="closeProfile()"><i class="fas fa-chevron-down"></i></button>
+                <div class="overlay-title">Profile</div>
+                <button class="settings-btn-elegant" onclick="openSettings()">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+            <div class="profile-content">
+                <div class="profile-pic-large">AJ</div>
+                <h2 class="profile-name">Alex Johnson</h2>
+                <p class="profile-info">@alex_j • Student</p>
+                <div style="width: 100%;">
+                    <div class="setting-item">
+                        <i class="fas fa-user-edit"></i>
+                        <span>Edit Details</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="setting-item">
+                        <i class="fas fa-wallet"></i>
+                        <span>My Wallet</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="setting-item">
+                        <i class="fas fa-star"></i>
+                        <span>Favorites</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="setting-item">
+                        <i class="fas fa-history"></i>
+                        <span>Activity History</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS OVERLAY -->
+        <div class="overlay-page" id="settingsOverlay">
+            <div class="overlay-header">
+                <button class="back-btn" onclick="closeSettings()"><i class="fas fa-arrow-left"></i></button>
+                <div class="overlay-title">Settings</div>
+                <div style="width: 38px;"></div>
+            </div>
+            <div class="settings-list">
+                <div class="setting-item">
+                    <i class="fas fa-moon"></i>
+                    <span>Appearance</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacy & Security</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-globe"></i>
+                    <span>Language</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help & Support</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="setting-item"
+                    style="margin-top: 25px; color: #ff4081; border-color: rgba(255, 64, 129, 0.2);">
+                    <i class="fas fa-sign-out-alt" style="color: #ff4081;"></i>
+                    <span>Log Out</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS OVERLAY -->
+        <div class="overlay-page" id="statsOverlay">
+            <div class="overlay-header">
+                <button class="back-btn" onclick="closeStats()"><i class="fas fa-arrow-left"></i></button>
+                <div class="overlay-title">Statistics</div>
+                <div style="width: 38px;"></div>
+            </div>
+            <div class="stats-grid">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-value">127</div>
+                        <div class="stat-label">Total Items</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">89</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">4.8</div>
+                        <div class="stat-label">Avg Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS OVERLAY -->
+        <div class="overlay-page" id="notifOverlay">
+            <div class="overlay-header">
+                <button class="back-btn" onclick="closeNotif()"><i class="fas fa-arrow-left"></i></button>
+                <div class="overlay-title">Notifications</div>
+                <div style="width: 38px;"></div>
+            </div>
+            <div class="notif-list">
+                <div class="notif-item">
+                    <div class="notif-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-title">New achievement unlocked</div>
+                        <div class="notif-time">2 hours ago</div>
+                    </div>
+                </div>
+                <div class="notif-item">
+                    <div class="notif-icon">
+                        <i class="fas fa-comment"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-title">3 new messages</div>
+                        <div class="notif-time">5 hours ago</div>
+                    </div>
+                </div>
+                <div class="notif-item">
+                    <div class="notif-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-title">Featured item added</div>
+                        <div class="notif-time">1 day ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDERS OVERLAY -->
+    <div class="overlay-page" id="ordersOverlay" style="background: var(--bg-color);">
+        <div class="overlay-header"
+            style="justify-content: flex-start; gap: 10px; background: transparent; border: none; box-shadow: none;">
+            <button class="back-btn" onclick="closeOrders()" style="background:transparent; border:none;"><i
+                    class="fas fa-chevron-left"></i></button>
+            <div class="search-bar"
+                style="width: 100%; height: 40px; margin: 0; background: rgba(255,255,255,0.05); border: none;">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search orders...">
+            </div>
+        </div>
+        <div style="padding: 0 15px; margin-top: 10px;">
+            <div class="tabs-wrapper" style="justify-content: center; gap: 30px; padding: 10px 0;">
+                <div class="tab-item active" onclick="switchOverlayTab(this)">Active</div>
+                <div class="tab-item" onclick="switchOverlayTab(this)">History</div>
+            </div>
+        </div>
+        <div class="content-center">
+            <p class="page-desc">No active orders</p>
+        </div>
+    </div>
+
+    <!-- PURCHASES OVERLAY -->
+    <div class="overlay-page" id="purchasesOverlay" style="background: var(--bg-color);">
+        <div class="overlay-header"
+            style="justify-content: flex-start; gap: 10px; background: transparent; border: none; box-shadow: none;">
+            <button class="back-btn" onclick="closePurchases()" style="background:transparent; border:none;"><i
+                    class="fas fa-chevron-left"></i></button>
+            <div class="search-bar"
+                style="width: 100%; height: 40px; margin: 0; background: rgba(255,255,255,0.05); border: none;">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search purchases...">
+            </div>
+        </div>
+        <div style="padding: 0 15px; margin-top: 10px;">
+            <div class="tabs-wrapper" style="justify-content: center; gap: 30px; padding: 10px 0;">
+                <div class="tab-item active" onclick="switchOverlayTab(this)">All</div>
+                <div class="tab-item" onclick="switchOverlayTab(this)">Returns</div>
+            </div>
+        </div>
+        <div class="content-center">
+            <p class="page-desc">No purchases yet</p>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAILS OVERLAY -->
+    <div class="overlay-page" id="productOverlay" style="background: var(--bg-color);">
+        <div class="overlay-header">
+            <button class="back-btn" onclick="closeProduct()"><i class="fas fa-chevron-left"></i></button>
+            <div class="overlay-title">Product Details</div>
+            <div style="width: 38px;"></div>
+        </div>
+        <div class="product-details-content" id="productDetailsContent">
+            <!-- Content filled by JS -->
+        </div>
+    </div>
+
+    <!-- LIGHTBOX OVERLAY -->
+    <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+        <div class="lightbox-content" id="lightboxContent">
+            <!-- Content filled by JS -->
+        </div>
+    </div>
+
+    <!-- SEARCH OVERLAY -->
+    <div class="overlay-page" id="searchOverlay">
+        <div class="overlay-header"
+            style="justify-content: flex-start; gap: 15px; background: transparent; border: none; box-shadow: none;">
+            <button class="back-btn" onclick="closeSearch()"
+                style="color: var(--accent-blue); border: none; background: transparent; box-shadow: none;"><i
+                    class="fas fa-chevron-left"></i></button>
+            <div class="search-bar"
+                style="width: 100%; height: 40px; margin: 0; background: transparent; border: none; box-shadow: none;">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search..." id="searchInputOverlay">
+                <button class="clear-search" id="clearSearchOverlay" title="Clear search">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="content-center" style="padding-top: 20px; justify-content: flex-start;">
+            <p class="page-desc" style="margin-top: 50px;">Start typing to search...</p>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let currentTab = 0;
+        let lastMarketClick = 0;
+        let currentProductId = null;
+        // isAnimating removed for responsiveness
+
+        const searchPlaceholders = {
+            1: 'Search market...',
+            2: 'Explore content...',
+            3: 'Search chats...'
+        };
+
+        const tabLabels = {
+            1: ['All', 'Popular', 'Featured'],
+            2: ['All', 'Trending', 'New'],
+            3: ['All', 'Recent']
+        };
+
+        const menuItems = {
+            1: [ // Market - 3 items
+                { icon: 'fa-cart-plus', text: 'Add Product' },
+                { icon: 'fa-tags', text: 'New Category' },
+                { icon: 'fa-bullhorn', text: 'Create Ad' }
+            ],
+            2: [ // Discover - 2 items
+                { icon: 'fa-image', text: 'Upload Content' },
+                { icon: 'fa-hashtag', text: 'Create Topic' }
+            ],
+            3: [ // Chats - 2 items
+                { icon: 'fa-user-plus', text: 'New Chat' },
+                { icon: 'fa-users', text: 'New Group' }
+            ]
+        };
+
+        // عناوين الصفحات
+        const pageTitles = {
+            0: 'Transform Center',
+            1: 'Marketplace',
+            2: 'Discover Hub',
+            3: 'Conversations'
+        };
+
+        function moveNavBackground(pageIndex) {
+            const navBackground = document.getElementById('navBackground');
+            const navItems = document.querySelectorAll('.nav-item');
+            const bottomNav = document.querySelector('.bottom-nav');
+
+            if (navBackground && navItems.length > pageIndex && bottomNav) {
+                // حساب عرض كل خانة
+                const navWidth = bottomNav.offsetWidth - 20; // ناقص padding
+                const itemWidth = navWidth / navItems.length;
+
+                // حساب الموضع بناءً على الفهرس - مع مراعاة العرض الجديد (90px)
+                const bgLeft = 10 + (itemWidth * pageIndex) + ((itemWidth - 90) / 2);
+
+                // حركة سريعة ومتجاوبة
+                navBackground.style.transition = 'left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                navBackground.style.left = bgLeft + 'px';
+            }
+        }
+
+        function updatePageTitle(pageIndex) {
+            const pageTitle = document.getElementById('pageTitle');
+            const title = pageTitles[pageIndex] || '';
+
+            pageTitle.textContent = title;
+
+            // إظهار العنوان مع تأثير تدريجي
+            if (title) {
+                pageTitle.classList.add('show');
+            } else {
+                pageTitle.classList.remove('show');
+            }
+        }
+
+        function updateTitleActions(pageIndex) {
+            const titleActions = document.getElementById('titleActions');
+            titleActions.innerHTML = '';
+
+            if (pageIndex === 0) {
+                // صفحة Transform - لا توجد أزرار إضافة
+                return;
+            }
+
+            // إنشاء زر الإضافة أو القلم بناءً على الصفحة
+            const actionContainer = document.createElement('div');
+            actionContainer.style.display = 'flex';
+            actionContainer.style.gap = '8px';
+
+            // زر البحث (موجود في كل الصفحات ما عدا 0)
+            const searchBtn = document.createElement('button');
+            searchBtn.className = 'action-btn';
+            searchBtn.innerHTML = '<i class="fas fa-search"></i>';
+            searchBtn.style.background = 'transparent';
+            searchBtn.style.border = 'none';
+            searchBtn.style.boxShadow = 'none';
+            searchBtn.onclick = openSearch;
+            actionContainer.appendChild(searchBtn);
+
+            const actionBtn = document.createElement('button');
+            actionBtn.className = 'action-btn';
+
+            if (pageIndex === 3) {
+                // صفحة Chats - زر القلم
+                actionBtn.innerHTML = '<i class="fas fa-pen"></i>';
+                actionBtn.title = 'Compose';
+            } else {
+                // صفحات Market و Discover - زر الزائد
+                actionBtn.innerHTML = '<i class="fas fa-plus"></i>';
+                actionBtn.title = 'Add';
+            }
+
+            actionBtn.onclick = toggleAddMenu;
+            actionContainer.appendChild(actionBtn);
+
+            titleActions.appendChild(actionContainer);
+        }
+
+        function openSearch() {
+            document.getElementById('searchOverlay').classList.add('active');
+            setTimeout(() => document.getElementById('searchInputOverlay').focus(), 300);
+        }
+
+        function closeSearch() {
+            document.getElementById('searchOverlay').classList.remove('active');
+        }
+
+        function toggleAddMenu() {
+            const menu = document.getElementById('addMenu');
+            const overlay = document.getElementById('menuOverlay');
+
+            if (menu.classList.contains('show')) {
+                closeAddMenu();
+            } else {
+                // Update menu items based on current page
+                updateMenuItems();
+                menu.classList.add('show');
+                overlay.classList.add('show');
+            }
+        }
+
+        function closeAddMenu() {
+            document.getElementById('addMenu').classList.remove('show');
+            document.getElementById('menuOverlay').classList.remove('show');
+        }
+
+        function updateMenuItems() {
+            const menu = document.getElementById('addMenu');
+            const items = menuItems[currentPage] || [];
+
+            menu.innerHTML = '';
+            items.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+                menuItem.innerHTML = `
+                    <i class="fas ${item.icon}"></i>
+                    <span>${item.text}</span>
+                `;
+                menuItem.onclick = () => {
+                    console.log('Clicked:', item.text);
+                    closeAddMenu();
+                };
+                menu.appendChild(menuItem);
+            });
+        }
+
+        function updateClearSearchButton() {
+            const searchInput = document.getElementById('searchInputOverlay');
+            const clearSearch = document.getElementById('clearSearchOverlay');
+
+            if (searchInput && clearSearch) {
+                if (searchInput.value.trim() !== '') {
+                    clearSearch.classList.add('show');
+                } else {
+                    clearSearch.classList.remove('show');
+                }
+            }
+        }
+
+        function switchPage(pageIndex) {
+            currentPage = pageIndex;
+            currentTab = 0;
+
+            // تحديث عنوان الصفحة
+            updatePageTitle(pageIndex);
+
+            // تحديث أزرار الإضافة بجانب العنوان
+            updateTitleActions(pageIndex);
+
+            // تحويل الصفحات
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const activePage = document.getElementById('page-' + pageIndex);
+            activePage.classList.add('active');
+
+            // Market Scroll Effect Logic
+            if (pageIndex === 1) {
+                document.body.classList.add('market-active');
+                activePage.onscroll = function () {
+                    if (this.scrollTop > 40) {
+                        document.body.classList.add('scrolled-mode');
+                    } else {
+                        document.body.classList.remove('scrolled-mode');
+                    }
+                };
+            } else {
+                document.body.classList.remove('market-active');
+                document.body.classList.remove('scrolled-mode');
+                // Clear scroll listener from other pages if needed
+                document.querySelectorAll('.page').forEach(p => p.onscroll = null);
+            }
+
+            // تحديث الخانات النشطة
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(n => n.classList.remove('active'));
+
+            const activeNavItem = navItems[pageIndex];
+            activeNavItem.classList.add('active');
+
+            // حركة قطرة الماء
+            moveNavBackground(pageIndex);
+
+            const tabsContainer = document.getElementById('tabsContainer');
+
+            // إغلاق القوائم عند تغيير الصفحات
+            closeAddMenu();
+
+            // تحديث زر مسح البحث
+            updateClearSearchButton();
+
+            if (pageIndex > 0) {
+                tabsContainer.classList.add('show');
+                const searchInput = document.getElementById('searchInputOverlay');
+                if (searchInput) searchInput.placeholder = searchPlaceholders[pageIndex] || 'Search...';
+
+                // تحديث علامات التبويب
+                const tabsWrapper = tabsContainer.querySelector('.tabs-wrapper');
+                const labels = tabLabels[pageIndex] || ['All', 'Popular', 'Recent'];
+
+                // إعادة بناء علامات التبويب
+                tabsWrapper.innerHTML = '';
+                labels.forEach((label, idx) => {
+                    const tab = document.createElement('div');
+                    tab.className = 'tab-item' + (idx === 0 ? ' active' : '');
+                    tab.textContent = label;
+                    tab.onclick = () => switchTab(idx);
+                    tabsWrapper.appendChild(tab);
+                });
+            } else {
+                // إخفاء البحث وعلامات التبويب لصفحة Transform
+                tabsContainer.classList.remove('show');
+            }
+        }
+
+        function switchTab(tabIndex) {
+            currentTab = tabIndex;
+            const tabItems = document.querySelectorAll('.tab-item');
+
+            tabItems.forEach((tab, idx) => {
+                if (idx === tabIndex) {
+                    tab.classList.add('active');
+                    tab.style.transform = 'translateY(1px)';
+                    setTimeout(() => {
+                        tab.style.transform = 'translateY(0)';
+                    }, 150);
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+        }
+
+        function openProfile() {
+            document.getElementById('profileOverlay').classList.add('active');
+        }
+        function closeProfile() {
+            document.getElementById('profileOverlay').classList.remove('active');
+        }
+        function openSettings() {
+            document.getElementById('settingsOverlay').classList.add('active');
+        }
+        function closeSettings() {
+            document.getElementById('settingsOverlay').classList.remove('active');
+        }
+        function openStats() {
+            document.getElementById('statsOverlay').classList.add('active');
+        }
+        function closeStats() {
+            document.getElementById('statsOverlay').classList.remove('active');
+        }
+        function openNotif() {
+            document.getElementById('notifOverlay').classList.add('active');
+        }
+        function closeNotif() {
+            document.getElementById('notifOverlay').classList.remove('active');
+        }
+
+        // تهيئة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function () {
+            // تأخير بسيط لضمان تحميل الصفحة بالكامل
+            setTimeout(() => {
+                moveNavBackground(0);
+                updatePageTitle(0);
+                updateTitleActions(0);
+            }, 100);
+
+            // إضافة معالج حدث للنقر على الخانات
+            document.querySelectorAll('.nav-item').forEach((item, index) => {
+                item.addEventListener('click', function () {
+                    const now = Date.now();
+                    if (index === 1 && currentPage === 1) {
+                        if (now - lastMarketClick < 300) {
+                            // Double click on Market
+                            const activePage = document.getElementById('page-1');
+                            activePage.scrollTo({ top: 0, behavior: 'smooth' });
+
+                            // Show loading indicator
+                            const headerCenter = document.querySelector('.header-center');
+                            const originalContent = headerCenter.innerHTML;
+                            headerCenter.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Marketplace';
+                            document.body.classList.add('scrolled-mode');
+
+                            setTimeout(() => {
+                                headerCenter.innerHTML = originalContent;
+                                if (activePage.scrollTop <= 40) {
+                                    document.body.classList.remove('scrolled-mode');
+                                }
+                            }, 2000);
+
+                            lastMarketClick = 0;
+                            return;
+                        }
+                        lastMarketClick = now;
+                    }
+                    switchPage(index);
+                });
+            });
+
+            // إضافة معالج حدث لحقل البحث
+            const searchInput = document.getElementById('searchInputOverlay');
+            const clearSearch = document.getElementById('clearSearchOverlay');
+
+            if (searchInput && clearSearch) {
+                searchInput.addEventListener('input', updateClearSearchButton);
+
+                clearSearch.addEventListener('click', function () {
+                    searchInput.value = '';
+                    updateClearSearchButton();
+                    searchInput.focus();
+                });
+
+                // إخفاء زر X عند التركيز على حقل البحث الفارغ
+                searchInput.addEventListener('focus', function () {
+                    if (this.value.trim() === '') {
+                        clearSearch.classList.remove('show');
+                    }
+                });
+            }
+        });
+
+        function openOrders() {
+            document.getElementById('ordersOverlay').classList.add('active');
+        }
+        function closeOrders() {
+            document.getElementById('ordersOverlay').classList.remove('active');
+        }
+        function openPurchases() {
+            document.getElementById('purchasesOverlay').classList.add('active');
+        }
+        function closePurchases() {
+            document.getElementById('purchasesOverlay').classList.remove('active');
+        }
+
+        function switchOverlayTab(element) {
+            const wrapper = element.parentElement;
+            wrapper.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // MARKET LOGIC
+        const products = [
+            { id: 1, name: 'Vintage Camera', price: '$120', desc: 'Classic film camera in excellent condition.', likes: 45, icon: 'fa-camera', isSaved: false, isLiked: false, seller: 'John Doe' },
+            { id: 2, name: 'Smart Watch', price: '$250', desc: 'Latest model with health tracking features.', likes: 128, icon: 'fa-clock', isSaved: false, isLiked: false, seller: 'Jane Smith' },
+            { id: 3, name: 'Headphones', price: '$89', desc: 'Noise cancelling wireless headphones.', likes: 256, icon: 'fa-headphones', isSaved: false, isLiked: false, seller: 'Audio Pro' },
+            { id: 4, name: 'Running Shoes', price: '$110', desc: 'Comfortable shoes for long distance running.', likes: 67, icon: 'fa-shoe-prints', isSaved: false, isLiked: false, seller: 'Run Fast' },
+            { id: 5, name: 'Backpack', price: '$45', desc: 'Durable waterproof backpack for hiking.', likes: 34, icon: 'fa-hiking', isSaved: false, isLiked: false, seller: 'Outdoor Gear' },
+            { id: 6, name: 'Sunglasses', price: '$150', desc: 'Polarized lenses with UV protection.', likes: 89, icon: 'fa-glasses', isSaved: false, isLiked: false, seller: 'Sunny Days' },
+            { id: 7, name: 'Gaming Mouse', price: '$60', desc: 'High precision mouse for competitive gaming.', likes: 210, icon: 'fa-mouse', isSaved: false, isLiked: false, seller: 'Gamer Zone' },
+            { id: 8, name: 'Keyboard', price: '$130', desc: 'Mechanical keyboard with RGB lighting.', likes: 155, icon: 'fa-keyboard', isSaved: false, isLiked: false, seller: 'Tech Store' },
+            { id: 9, name: 'Laptop Stand', price: '$35', desc: 'Ergonomic aluminum stand for laptops.', likes: 42, icon: 'fa-laptop', isSaved: false, isLiked: false, seller: 'Office Setup' },
+            { id: 10, name: 'Coffee Maker', price: '$85', desc: 'Programmable coffee maker for fresh brew.', likes: 76, icon: 'fa-coffee', isSaved: false, isLiked: false, seller: 'Home Brew' },
+            { id: 11, name: 'Desk Lamp', price: '$25', desc: 'LED desk lamp with adjustable brightness.', likes: 55, icon: 'fa-lightbulb', isSaved: false, isLiked: false, seller: 'Bright Ideas' },
+            { id: 12, name: 'Plant Pot', price: '$15', desc: 'Ceramic pot for indoor plants.', likes: 120, icon: 'fa-leaf', isSaved: false, isLiked: false, seller: 'Green Thumb' }
+        ];
+
+        function renderMarket() {
+            const grid = document.getElementById('marketGrid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.onclick = () => openProduct(p.id);
+                card.innerHTML = `
+                    <div class="product-save" onclick="toggleSave(event, ${p.id})" style="color: ${p.isSaved ? 'var(--accent-blue)' : 'rgba(255,255,255,0.4)'}">
+                        <i class="${p.isSaved ? 'fas' : 'far'} fa-bookmark"></i>
+                    </div>
+                    <div class="product-image"><i class="fas ${p.icon}"></i></div>
+                    <div class="product-info">
+                        <div class="product-price">${p.price}</div>
+                        <div class="product-desc-short">${p.desc}</div>
+                        <div class="product-like" onclick="toggleLike(event, ${p.id})">
+                            <i class="${p.isLiked ? 'fas' : 'far'} fa-heart" style="color: ${p.isLiked ? '#ff4081' : 'rgba(255,255,255,0.4)'};"></i>
+                            <span style="color: ${p.isLiked ? '#ff4081' : 'rgba(255,255,255,0.4)'}">${p.likes}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleSave(event, id) {
+            if (event) event.stopPropagation();
+            const product = products.find(p => p.id === id);
+            if (product) {
+                product.isSaved = !product.isSaved;
+                renderMarket();
+                if (currentProductId === id) {
+                    updateProductOverlayUI(product);
+                }
+            }
+        }
+
+        function toggleLike(event, id) {
+            if (event) event.stopPropagation();
+            const product = products.find(p => p.id === id);
+            if (product) {
+                if (product.isLiked) {
+                    product.likes--;
+                    product.isLiked = false;
+                } else {
+                    product.likes++;
+                    product.isLiked = true;
+                }
+                renderMarket();
+                if (currentProductId === id) {
+                    updateProductOverlayUI(product);
+                }
+            }
+        }
+
+        function updateProductOverlayUI(product) {
+            const saveBtn = document.getElementById('overlaySaveBtn');
+            const likeBtn = document.getElementById('overlayLikeBtn');
+            const likeCount = document.getElementById('overlayLikeCount');
+
+            if (saveBtn) {
+                saveBtn.innerHTML = product.isSaved ? '<i class="fas fa-bookmark"></i>' : '<i class="far fa-bookmark"></i>';
+                saveBtn.style.color = product.isSaved ? 'var(--accent-blue)' : 'white';
+            }
+            if (likeBtn) {
+                likeBtn.innerHTML = product.isLiked ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
+                likeBtn.style.color = product.isLiked ? '#ff4081' : 'white';
+            }
+            if (likeCount) {
+                likeCount.textContent = product.likes;
+            }
+        }
+
+        function openProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            currentProductId = id;
+
+            const content = document.getElementById('productDetailsContent');
+            content.innerHTML = `
+                <div class="product-large-image" onclick="openLightbox('${product.icon}')">
+                    <i class="fas ${product.icon}"></i>
+                    <div class="overlay-actions-top">
+                        <div class="overlay-action-circle" id="overlaySaveBtn" onclick="toggleSave(event, ${product.id})">
+                            ${product.isSaved ? '<i class="fas fa-bookmark"></i>' : '<i class="far fa-bookmark"></i>'}
+                        </div>
+                        <div class="overlay-action-circle" id="overlayLikeBtn" onclick="toggleLike(event, ${product.id})">
+                            ${product.isLiked ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>'}
+                        </div>
+                    </div>
+                </div>
+                <div class="product-details-header">
+                    <div class="product-details-title">${product.name}</div>
+                    <div class="product-details-likes">
+                        <i class="fas fa-heart" style="color: #ff4081;"></i>
+                        <span id="overlayLikeCount">${product.likes}</span>
+                    </div>
+                </div>
+                <div class="product-details-price">${product.price}</div>
+                <div class="product-details-desc">${product.desc} <br> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                
+                <div class="seller-info">
+                    <div class="seller-pic">${product.seller.charAt(0)}</div>
+                    <div class="seller-details">
+                        <div class="seller-name">${product.seller}</div>
+                        <div class="seller-rating">★★★★★ (4.8)</div>
+                    </div>
+                </div>
+
+                <div class="product-actions">
+                    <button class="action-btn-large btn-primary">
+                        <span>Order Product</span>
+                    </button>
+                    <button class="action-btn-large btn-secondary">
+                        <span>Message Seller</span>
+                    </button>
+                </div>
+            `;
+            document.getElementById('productOverlay').classList.add('active');
+        }
+
+        function closeProduct() {
+            document.getElementById('productOverlay').classList.remove('active');
+            currentProductId = null;
+        }
+
+        function openLightbox(iconClass) {
+            const content = document.getElementById('lightboxContent');
+            content.innerHTML = `<i class="fas ${iconClass}"></i>`;
+            document.getElementById('lightboxOverlay').classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxOverlay').classList.remove('active');
+        }
+
+        // Initialize Market
+        document.addEventListener('DOMContentLoaded', function () {
+            renderMarket();
+        });
+
+        // التعامل مع تغيير حجم النافذة
+        window.addEventListener('resize', function () {
+            moveNavBackground(currentPage);
+        });
+    </script>
+</body>
+
+</html>
